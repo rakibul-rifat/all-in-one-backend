@@ -18,7 +18,12 @@ mongoose.connection.once('open', () => {
 
 // Routes
 const todoRoutes = require('./routes/todos');
-app.use('/api/todos', todoRoutes); // ✅ THIS LINE IS CRUCIAL
+app.use('/api/todos', todoRoutes);
+
+// ✅ Add this root route
+app.get("/", (req, res) => {
+  res.send("Backend server is running ✅");
+});
 
 // Server Start
 const PORT = 5000;
