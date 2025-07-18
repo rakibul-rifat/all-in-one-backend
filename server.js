@@ -7,8 +7,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Ensure default user for auth
 const User = require("./models/User");
-
 async function ensureDefaultUser() {
   const userCount = await User.countDocuments();
   if (userCount === 0) {
@@ -20,21 +20,37 @@ async function ensureDefaultUser() {
     console.log("Default user created: test@example.com / password123");
   }
 }
-
 ensureDefaultUser();
 
-// MongoDB connect
-mongoose.connect("mongodb://127.0.0.1:27017/blogdb");
+// MongoDB connect (choose one DB name, e.g. 'mern_app')
+mongoose.connect("mongodb://127.0.0.1:27017/mern_app", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+mongoose.connection.once("open", () => {
+  console.log("Connected to MongoDB");
+});
 
-// Use auth route
-const authRoutes = require("./routes/authRoutes");
-app.use("/api/auth", authRoutes); // ✅ this is what enables `/api/auth/login`
+// Routes
+const todoRoutes = require("./routes/todos");
+app.use("/api/todos", todoRoutes);
 
 const blogRoutes = require("./routes/blogRoutes");
 app.use("/api/blogs", blogRoutes);
 
+const authRoutes = require("./routes/authRoutes");
+app.use("/api/auth", authRoutes);
+
+// Serve uploads folder for blog images
 app.use("/uploads", express.static("uploads"));
 
-app.listen(5000, () => {
-  console.log("Server running on http://localhost:5000");
+// Root route
+app.get("/", (req, res) => {
+  res.send("Backend server is running ✅");
+});
+
+// Start server
+const PORT = 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
