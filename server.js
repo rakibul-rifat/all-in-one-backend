@@ -1,32 +1,40 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const app = express();
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const bcrypt = require("bcrypt");
 
-// Middleware
+const app = express();
 app.use(cors());
 app.use(express.json());
 
+const User = require("./models/User");
+
+async function ensureDefaultUser() {
+  const userCount = await User.countDocuments();
+  if (userCount === 0) {
+    const hashedPassword = await bcrypt.hash("password123", 10);
+    await User.create({
+      email: "test@example.com",
+      password: hashedPassword,
+    });
+    console.log("Default user created: test@example.com / password123");
+  }
+}
+
+ensureDefaultUser();
+
 // MongoDB connect
-mongoose.connect('mongodb://127.0.0.1:27017/todo_app', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-mongoose.connection.once('open', () => {
-  console.log('Connected to MongoDB');
-});
+mongoose.connect("mongodb://127.0.0.1:27017/blogdb");
 
-// Routes
-const todoRoutes = require('./routes/todos');
-app.use('/api/todos', todoRoutes);
+// Use auth route
+const authRoutes = require("./routes/authRoutes");
+app.use("/api/auth", authRoutes); // ✅ this is what enables `/api/auth/login`
 
-// ✅ Add this root route
-app.get("/", (req, res) => {
-  res.send("Backend server is running ✅");
-});
+const blogRoutes = require("./routes/blogRoutes");
+app.use("/api/blogs", blogRoutes);
 
-// Server Start
-const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+app.use("/uploads", express.static("uploads"));
+
+app.listen(5000, () => {
+  console.log("Server running on http://localhost:5000");
 });
