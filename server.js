@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+require("dotenv").config();
 
 const app = express();
 app.use(cors());
@@ -23,7 +24,7 @@ async function ensureDefaultUser() {
 ensureDefaultUser();
 
 // MongoDB connect (choose one DB name, e.g. 'mern_app')
-mongoose.connect("mongodb://127.0.0.1:27017/mern_app", {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
