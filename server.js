@@ -28,7 +28,7 @@ mongoose.connect(process.env.MONGO_URI)
     // Start server only after DB ready
     const PORT = 5000;
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
+      console.log(`🚀 Server running on https://all-in-one-backend-flame.vercel.app:${PORT}`);
     });
 
   })
