@@ -39,6 +39,9 @@ app.use("/api/blogs", blogRoutes);
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
 
+const sentenceRoutes = require("./routes/sentenceRoutes");
+app.use("/api/sentences", sentenceRoutes);
+
 // Serve uploads folder for blog images
 app.use("/uploads", express.static("uploads"));
 
@@ -47,7 +50,7 @@ app.get("/", (req, res) => {
   res.send("Backend server is running ✅");
 });
 
-// Start server (use process.env.PORT for deployment)
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
